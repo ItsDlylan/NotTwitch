@@ -1,3 +1,16 @@
 {
-  "streams": []
+  "streams": [
+    {
+      "title": "Dylans Stream",
+      "description": "aisdfhjasdf",
+      "userId": "107179883651563347795",
+      "id": 1
+    },
+    {
+      "title": "asdfgasdfa",
+      "description": "sdfasdf",
+      "userId": "107179883651563347795",
+      "id": 2
+    }
+  ]
 }
