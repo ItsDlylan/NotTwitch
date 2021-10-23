@@ -10,7 +10,7 @@ const router = express.Router();
 router
 	.route('/streams')
 	.get(streamController.getAllStreams)
-	.post(tourController.createStream);
+	.post(streamController.createStream);
 
 // Streams by userName
 // router
