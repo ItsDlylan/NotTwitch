@@ -7,7 +7,7 @@ class StreamShow extends React.Component {
 	//constructor to give us the ability to have a ref to the video element we created.
 	constructor(props) {
 		super(props);
-		
+
 		//Create a Ref for the video Element.
 		this.videoRef = React.createRef();
 	}
@@ -42,7 +42,7 @@ class StreamShow extends React.Component {
 		// https://www.npmjs.com/package/node-media-server via flv.js over http-flv
 		this.player = flv.createPlayer({
 			type: 'flv',
-			url: `http://localhost:8000/live/${id}.flv`,
+			url: `http://not-twitch.herokuapp.com:8000/live/${id}.flv`,
 		});
 		// Attach the video Element to the Player.
 		this.player.attachMediaElement(this.videoRef.current);

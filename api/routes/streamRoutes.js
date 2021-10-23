@@ -7,8 +7,10 @@ const router = express.Router();
 
 // // Routes
 // // All Streams
-router.route('/streams').get(streamController.getAllStreams);
-// .post(tourController.createStream);
+router
+	.route('/streams')
+	.get(streamController.getAllStreams)
+	.post(tourController.createStream);
 
 // Streams by userName
 // router

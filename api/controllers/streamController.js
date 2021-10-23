@@ -20,16 +20,17 @@ exports.getAllStreams = async (req, res, next) => {
 		next(err);
 	}
 };
-// exports.createStream = async (req, res, next) => {
-// 	console.log(hit);
-// 	res.status(200).json({
-// 		status: 'success',
-// 		results: 1,
-// 		data: {
-// 			streams: 1,
-// 		},
-// 	});
-// };
+exports.createStream = async (req, res, next) => {
+	console.log(hit);
+	res.status(200).json({
+		status: 'success',
+		results: 1,
+		data: {
+			streams: 1,
+		},
+	});
+};
+
 // // // Stream Controller Methods by userName
 // // ENDPOINT `/streams/:username`
 // exports.getStream = async (req, res, next) => {
