@@ -12,7 +12,7 @@ class StreamList extends React.Component {
 	renderAdmin = (stream) => {
 		// if the streams id is equal to the currentUserId from the state.auth.userId
 		// then add the buttons for editing/deleting the stream.
-		if (stream.userId === this.props.currentUserId) {
+		if (stream.userID === this.props.currentUserId) {
 			return (
 				<div className='right floated content'>
 					<Link
@@ -44,41 +44,22 @@ class StreamList extends React.Component {
 			// first due to Semantic UI floating them to the right.
 			return (
 				<div className='item' key={stream.id}>
-					{this.renderAdmin(stream)}
-					<i className='large middle aligned icon camera' />
+					<i className='large middle aligned icon video' />
 					<div className='content'>
-						<Link to={`/streams/${stream.id}`} className='header'>
-							{stream.title}
+						<Link to={`/${stream.username}`} className='header'>
+							{stream.title} | {stream.username}
 						</Link>
-						<div className='description'>{stream.description}</div>
 					</div>
 				</div>
 			);
 		});
 	}
-	// Render the Create Button Helper Method.
-	renderCreate() {
-		// Testing Linking Classes for future "can't create 2 streams" by disabling the button if you have one up
-		// const linkClass = `ui button primary `;
-
-		//if user is signed in, render the Create Stream Button
-		if (this.props.isSignedIn) {
-			return (
-				<div style={{ textAlign: 'right' }}>
-					<Link to='/streams/new' className='ui button primary'>
-						Create Stream
-					</Link>
-				</div>
-			);
-		}
-	}
 
 	render() {
 		return (
 			<div>
-				<h2>Streams</h2>
+				<h2>Live Streams</h2>
 				<div className='ui celled list'>{this.renderList()}</div>
-				{this.renderCreate()}
 			</div>
 		);
 	}

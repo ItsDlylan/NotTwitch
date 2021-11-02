@@ -41,7 +41,6 @@ const StreamForm = (props) => {
 				if (!formValues.description) {
 					errors.description = 'You must enter a description';
 				}
-
 				return errors;
 			}}
 			render={({ handleSubmit }) => (
@@ -55,6 +54,11 @@ const StreamForm = (props) => {
 						name='description'
 						component={renderInput}
 						label='Enter Description'
+					/>
+					<Field
+						name='tags'
+						component={renderInput}
+						label='Enter Some Tags'
 					/>
 					<button className='ui button primary'>Submit</button>
 				</form>

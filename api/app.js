@@ -5,11 +5,11 @@ Everything in this file represents the APP, all the middleware the APP uses goes
 const express = require('express');
 // Middleware Morgan
 const morgan = require('morgan');
-
+const cors = require('cors');
 const path = require('path');
 
-// const AppError = require('./utils/appError');
-// const globalErrorhandler = require('./controllers/errorController');
+const AppError = require('./utils/appError');
+const globalErrorhandler = require('./controllers/errorController');
 // Custom Routers
 const streamRouter = require('./routes/streamRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -24,6 +24,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('dev'));
 }
+app.use(cors());
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -34,16 +35,17 @@ app.use((req, res, next) => {
 // 3) Routes
 
 app.use('/api/v1/streams', streamRouter);
-// app.use('/api/v1/users', userRouter);
+app.use('/api/v1/users', userRouter);
 
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
 	res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 });
 
 app.all('*', (req, res, next) => {
+	res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 	next(new AppError(`Can't find ${req.originalUrl} on the server!`, 404));
 });
 
-// app.use(globalErrorhandler);
+app.use(globalErrorhandler);
 
 module.exports = app;

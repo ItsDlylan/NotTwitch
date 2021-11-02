@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-// const { default: streams } = require('../../client/src/apis/streams');
 
 const streamSchema = new mongoose.Schema(
 	{
-		userName: {
+		username: {
 			type: String,
 			required: [true, 'A Stream must have a user applied to it'],
 			trim: true,
@@ -24,9 +23,23 @@ const streamSchema = new mongoose.Schema(
 				'A stream title must have more or equal then 10 characters',
 			],
 		},
-		createdAt: { type: Date, default: Date.now(), select: false },
-		tags: {
+		userID: {
 			type: String,
+			unique: [true, 'A user can only have 1 stream'],
+			required: [true, 'A stream must be connected to a user'],
+		},
+		streamKEY: {
+			type: String,
+			required: [
+				true,
+				'A stream needs to have a streamKey in order to be broadcasted',
+			],
+			unique: [true, 'A stream can only be associated to 1 streamkey'],
+			select: false,
+		},
+		createdAt: { type: Date, default: Date.now(), select: true },
+		tags: {
+			type: [String],
 			enum: {
 				values: [
 					'english',
@@ -47,9 +60,18 @@ const streamSchema = new mongoose.Schema(
 	},
 );
 
+streamSchema.set('toJSON', {
+	virtuals: true,
+	transform: (doc, ret, options) => {
+		delete ret.__v;
+		ret.id = ret._id.toString();
+		delete ret._id;
+	},
+});
+
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 streamSchema.pre('save', function (next) {
-	this.slug = slugify(this.name, { lower: true });
+	this.slug = slugify(this.username, { lower: true });
 	next();
 });
 

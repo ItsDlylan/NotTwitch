@@ -1,6 +1,6 @@
 // import the streams api to be able to be called.
 import streams from '../apis/streams';
-
+import users from '../apis/users';	
 // Import the history to be able to redirect the page.
 import history from '../history';
 
@@ -8,7 +8,6 @@ import {
 	SIGN_IN,
 	SIGN_OUT,
 	CREATE_STREAM,
-	FETCH_STREAM,
 	FETCH_STREAMS,
 	DELETE_STREAM,
 	EDIT_STREAM,
@@ -17,12 +16,10 @@ import {
 // dispatching the reset function allows you to reset the form fields.
 import { reset } from 'redux-form';
 
-// Sign In Action, takes a userId as an argument that gets sent to the reducer via the payload.
-export const signIn = (userId) => {
-	return {
-		type: SIGN_IN,
-		payload: userId,
-	};
+// Sign In Action, takes an object of email and password
+export const signIn = (obj) => async (dispatch) => {
+	const response = await users.post('/api/v1/users/login', obj);
+	dispatch({ type: SIGN_IN, payload: response.data });
 };
 
 // Sign Out Action, sends the type's action as SIGN_OUT
@@ -43,7 +40,10 @@ export const createStream = (formValues) => async (dispatch, getState) => {
 	// Grabs the userId from the .auth in the Redux Store
 	const { userId } = getState().auth;
 	// posts the form values and the userId into a new object into the endpoint '/streams'
-	const response = await streams.post('/streams', { ...formValues, userId });
+	const response = await streams.post('/api/v1/streams/', {
+		...formValues,
+		userId,
+	});
 	// Sends a dispatch with a Type of 'CREATE_STREAM' with the response.data as the payload.
 	dispatch({ type: CREATE_STREAM, payload: response.data });
 	// Etch case, to reset the form in case the redirect doesnt work.
@@ -57,37 +57,31 @@ export const createStream = (formValues) => async (dispatch, getState) => {
 
 export const fetchStreams = () => async (dispatch) => {
 	// gets all of the streams
-	const response = await streams.get('/streams');
+	const response = await streams.get('/api/v1/streams/');
+
 	// Sends all of the streams via the FETCH_STREAMS action.type
-	dispatch({ type: FETCH_STREAMS, payload: response.data });
-};
-
-// Create FetchStream Action, this action will get one of the streams from the endPoint via the passed in id argument
-// and hook it up with the ReduxStore
-
-export const fetchStream = (id) => async (dispatch) => {
-	// get the stream via the id
-	const response = await streams.get(`/streams/${id}`);
-	// dispatch with the type of FETCH_STREAM and the single stream
-	dispatch({ type: FETCH_STREAM, payload: response.data });
+	dispatch({ type: FETCH_STREAMS, payload: response.data.data.streams });
 };
 
 // Create deleteStream Action, this action will delete the Stream with the corresponding id that you pass in
 // it'll delete from the database and the reduxStore
 
-export const deleteStream = (id) => async (dispatch) => {
+export const deleteStream = (username) => async (dispatch) => {
 	// delete the stream from the API
-	await streams.delete(`/streams/${id}`);
-	// send the dispatch action with DELETE_STREAM, and the payload just include the id
-	dispatch({ type: DELETE_STREAM, payload: id });
+	await streams.delete(`/api/v1/streams/${username}`);
+	// send the dispatch action with DELETE_STREAM, and the payload just include the username
+	dispatch({ type: DELETE_STREAM, payload: username });
 	// Do some programmatic navigation to get back to the root route
 	history.push('/');
 };
 
-// Create editStream Action, this action will edit a stream located by the id, with the formValues that you pass in.
-export const editStream = (id, formValues) => async (dispatch) => {
+// Create editStream Action, this action will edit a stream located by the username, with the formValues that you pass in.
+export const editStream = (username, formValues) => async (dispatch) => {
 	// using patch, to just update the new information rather than .put to override old properties.
-	const response = await streams.patch(`/streams/${id}`, formValues);
+	const response = await streams.patch(
+		`/api/v1/streams/${username}`,
+		formValues,
+	);
 	// send the dispatch with the acttion EDIT_STREAM with the payload being the edited Stream
 	dispatch({ type: EDIT_STREAM, payload: response.data });
 	// etch case, reset the form.

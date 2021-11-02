@@ -4,18 +4,22 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start:dev": "cd api && nodemon server.js",
-		"start": "cd api && node server.js",
-		"build": "cd client && npm install && npm run build"
+		"start:dev": "cd api && NODE_ENV=development nodemon server.js",
+		"start": "cd api && nodemon server.js",
+		"build": "cd clent && npm install && npm run build"
 	},
 	"keywords": [],
 	"dependencies": {
+		"bcryptjs": "^2.4.3",
+		"cors": "^2.8.5",
 		"dotenv": "^10.0.0",
 		"express": "^4.17.1",
 		"json-server": "^0.16.3",
+		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^6.0.11",
 		"morgan": "^1.10.0",
 		"node-media-server": "^2.3.8",
+		"nodemailer": "^6.7.0",
 		"slugify": "^1.6.1",
 		"validator": "^13.6.0"
 	},
