@@ -33,6 +33,9 @@ class StreamList extends React.Component {
 	};
 	// Render the List of Streams.
 	renderList() {
+		if (this.props.streams.length === 0) {
+			return <h3>No one is Live :(</h3>;
+		}
 		return this.props.streams.map((stream) => {
 			// This filter is from an exercise, going to build filters later.
 			// Filter to show just the user Created Streams

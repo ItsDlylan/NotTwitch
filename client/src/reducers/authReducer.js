@@ -1,5 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
-import { SIGN_IN, SIGN_OUT } from '../actions/types';
+import { SIGN_IN, SIGN_OUT, SIGN_UP } from '../actions/types';
 
 const INITIAL_STATE = {
 	isSignedIn: false,
@@ -27,6 +27,11 @@ export default (state = INITIAL_STATE, action) => {
 				email: null,
 				username: null,
 				userId: null,
+			};
+		case SIGN_UP:
+			return {
+				...state,
+				isSignedIn: true,
 			};
 		default:
 			return state;

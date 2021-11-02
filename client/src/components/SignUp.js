@@ -1,19 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { signIn, signOut } from '../actions';
+import { signIn, signUp } from '../actions';
 import Modal from './Modal';
-import SignInForm from './SignInForm';
-import { Link } from 'react-router-dom';
+import SignUpForm from './SignUpForm';
 import { toast } from 'react-toastify';
-import './UserAuth.css';
-class UserAuth extends React.Component {
+
+class SignUp extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			modal: false,
 			modalClasses: '',
+			username: '',
 			email: '',
 			password: '',
+			passwordConfirm: '',
 			isLoading: '',
 		};
 	}
@@ -27,10 +28,6 @@ class UserAuth extends React.Component {
 		}
 		this.setState({ modal: false });
 		this.setState({ modalClasses: '' });
-	};
-
-	onSignOutClick = () => {
-		this.props.signOut();
 	};
 
 	doSignIn = async () => {
@@ -53,19 +50,42 @@ class UserAuth extends React.Component {
 				password: '',
 			});
 		} catch (err) {
-			console.log();
-			toast.error(err.response.data.message);
+			toast.error('An Error has occured, please try again.');
 			// Error Message
 			// console.log(err.response.data.message);
 			// '.userAuthModal'.transition('jiggle');
 			setTimeout(() => {
 				this.setState({
 					isLoading: '',
+					username: '',
 					email: '',
 					password: '',
+					passwordConfirm: '',
 				});
 			}, 4000);
 		}
+	};
+
+	doSignUp = async () => {
+		this.setState({ isLoading: 'loading' });
+		try {
+			const obj = {
+				username: this.state.username,
+				email: this.state.email,
+				password: this.state.password,
+				passwordConfirm: this.state.passwordConfirm,
+			};
+			await this.props.signUp(obj);
+			toast.success('User Successfully created');
+			this.doSignIn();
+		} catch (err) {
+			console.log({ err });
+			toast.error(err);
+		}
+	};
+
+	setUsername = (value) => {
+		this.setState({ username: value });
 	};
 
 	setEmail = (value) => {
@@ -76,16 +96,24 @@ class UserAuth extends React.Component {
 		this.setState({ password: value });
 	};
 
+	setPasswordConfirm = (value) => {
+		this.setState({ passwordConfirm: value });
+	};
+
 	renderContent = () => {
 		return (
-			<SignInForm
+			<SignUpForm
 				loading={this.state.isLoading}
+				username={this.state.username}
+				setUsername={this.setUsername}
 				email={this.state.email}
 				setEmail={this.setEmail}
 				password={this.state.password}
 				setPassword={this.setPassword}
+				passwordConfirm={this.state.passwordConfirm}
+				setPasswordConfirm={this.setPasswordConfirm}
 				toggle={this.toggle}
-				doSignIn={this.doSignIn}
+				doSignUp={this.doSignUp}
 			/>
 		);
 	};
@@ -101,7 +129,7 @@ class UserAuth extends React.Component {
 					}}
 					type='submit'
 				>
-					Sign In
+					Sign Up!
 				</button>
 				<button
 					className='ui button'
@@ -116,52 +144,31 @@ class UserAuth extends React.Component {
 		);
 	};
 	renderAuthButton() {
-		if (this.props.isSignedIn === null) {
-			return null;
-		} else if (this.props.isSignedIn) {
-			return (
-				<div className='ui simple dropdown item'>
-					{this.props.username} <i className='dropdown icon'></i>
-					<div className='menu'>
-						<Link className='item right' to={'/'}>
-							<i className='large middle aligned icon user' />
-							Profile
-						</Link>
-						<button
-							type='button'
-							className='item'
-							onClick={this.onSignOutClick}
-						>
-							<i className='sign-out icon'></i>
-							Sign Out
-						</button>
-					</div>
-				</div>
-			);
-		} else {
-			return (
-				<React.Fragment>
-					<Modal
-						classes={`${this.state.modalClasses} userAuthModal`}
-						onDismiss={() =>
-							this.setState({ modal: false, modalClasses: '' })
-						}
-						title={'Log In'}
-						content={this.renderContent()}
-						actions={this.renderActions()}
-					/>
-					<button
-						className='ui green button'
-						style={{ margin: '5px 5px 5px 0px' }}
-						onClick={this.toggle}
-						type='button'
-					>
-						<i className='sign-in icon'></i>
-						Sign In
-					</button>
-				</React.Fragment>
-			);
+		if (this.props.isSignedIn) {
+			return <> </>;
 		}
+
+		return (
+			<React.Fragment>
+				<Modal
+					classes={`${this.state.modalClasses} userAuthModal`}
+					onDismiss={() =>
+						this.setState({ modal: false, modalClasses: '' })
+					}
+					title={'Sign Up'}
+					content={this.renderContent()}
+					actions={this.renderActions()}
+				/>
+				<button
+					className='ui blue google button'
+					style={{ margin: '5px 5px 5px 0px' }}
+					onClick={this.toggle}
+					type='button'
+				>
+					Sign Up
+				</button>
+			</React.Fragment>
+		);
 	}
 
 	render() {
@@ -173,4 +180,4 @@ const mapStateToProps = (state) => {
 	return { isSignedIn: state.auth.isSignedIn, username: state.auth.username };
 };
 
-export default connect(mapStateToProps, { signIn, signOut })(UserAuth);
+export default connect(mapStateToProps, { signIn, signUp })(SignUp);

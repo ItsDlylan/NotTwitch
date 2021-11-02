@@ -1,12 +1,14 @@
 // import the streams api to be able to be called.
+
 import streams from '../apis/streams';
-import users from '../apis/users';	
+import users from '../apis/users';
 // Import the history to be able to redirect the page.
 import history from '../history';
 
 import {
 	SIGN_IN,
 	SIGN_OUT,
+	SIGN_UP,
 	CREATE_STREAM,
 	FETCH_STREAMS,
 	DELETE_STREAM,
@@ -26,6 +28,16 @@ export const signIn = (obj) => async (dispatch) => {
 export const signOut = () => {
 	return {
 		type: SIGN_OUT,
+	};
+};
+
+export const signUp = (obj) => async (dispatch) => {
+	// obj.streamKEY = await crypto.createHash('sha256');
+	obj.streamKEY = (Math.random() * 10000).toString();
+	obj.title = 'Untitled Stream';
+	const response = await users.post('/api/v1/users/signup', obj);
+	return {
+		type: SIGN_UP,
 	};
 };
 

@@ -57,6 +57,7 @@ nms.on('prePublish', async (id, StreamPath, args) => {
 	let streamkey = StreamPath.split('/');
 	streamkey = streamkey[2];
 	const user = await User.find({ streamKEY: streamkey });
+	// Attempt to find an active stream with streamKey
 	const findStream = await Stream.findOne({ streamKEY: streamkey });
 	if (!findStream) {
 		let streamObj = {
@@ -68,9 +69,6 @@ nms.on('prePublish', async (id, StreamPath, args) => {
 		};
 		const newStream = await Stream.create(streamObj);
 	}
-
-	// let session = nms.getSession(id);
-	// session.reject();
 });
 // Delete Stream when Streamer ends Stream
 nms.on('donePublish', async (id, StreamPath, args) => {

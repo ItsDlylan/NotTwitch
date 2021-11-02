@@ -6,9 +6,9 @@ import _ from 'lodash';
 
 class StreamEdit extends React.Component {
 	// When the component Mounts, run the action fetchStream via the current Streams id
-	componentDidMount() {
-		this.props.fetchStream(this.props.match.params.username);
-	}
+	// componentDidMount() {
+	// 	this.props.fetchStream(this.props.match.params.username);
+	// }
 	// on Form Submit with the formValues, run the action edit Stream with the username, and the formValues
 	onSubmit = (formValues) => {
 		this.props.editStream(this.props.match.params.username, formValues);
@@ -28,12 +28,7 @@ class StreamEdit extends React.Component {
 				<h3>Edit a Stream</h3>
 				<StreamForm
 					// Using Lodashes .pick function, pick the keys 'title, and 'description' from the stream.
-					initialValues={_.pick(
-						this.props.stream,
-						'title',
-						'description',
-						'tags',
-					)}
+					initialValues={_.pick(this.props.stream, 'title', 'tags')}
 					onSubmit={this.onSubmit}
 				/>
 			</div>
@@ -42,7 +37,8 @@ class StreamEdit extends React.Component {
 }
 // grab the state.streams at the Id grabbed from the ownProps.match.params.id
 const mapStateToProps = (state, ownProps) => {
-	return { stream: state.streams[ownProps.match.params.id] };
+	console.log(ownProps);
+	// return { stream: state.streams[ownProps.match.params.id] };
 };
 // Connect the state, and the actions to the component
 export default connect(mapStateToProps, { editStream })(StreamEdit);

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 // import { fetchStream } from '../../actions';
 import flv from 'flv.js';
 import axios from 'axios';
+import StreamEdit from './StreamEdit';
 class StreamShow extends React.Component {
 	//constructor to give us the ability to have a ref to the video element we created.
 	constructor(props) {
@@ -53,7 +54,7 @@ class StreamShow extends React.Component {
 		}
 
 		const { streamKEY } = this.state.stream.data.stream;
-		console.log(this.state.stream.data.stream);
+
 		// console.log(this.props.stream.data.stream);
 		//Create the Player, with type:flv' and using the URL
 		// https://www.npmjs.com/package/node-media-server via flv.js over http-flv
@@ -66,18 +67,23 @@ class StreamShow extends React.Component {
 		// Load the Player.
 		this.player.load();
 		// Test the play later for automatic plays.
-		// this.player.play();
+		this.player.play();
 	}
 	editStream = () => {
-		console.log(this.state.stream);
+		return <StreamEdit />;
 	};
 	renderAdmin = (stream) => {
 		if (stream === undefined) {
 			return;
 		}
+		console.log(stream.data.stream.userID);
+		console.log(this.state.stream.data.stream.userID);
 
-		if (stream.data.stream.userID === this.props.currentUserId) {
-			return <div onClick={this.editStream}>Edit</div>;
+		if (
+			stream.data.stream.userID === this.state.stream.data.stream.userID
+		) {
+			console.log('hit');
+			return <div onClick={this.editStream}>Edit Stream</div>;
 		}
 	};
 	// to get the live count, go to localhost:8000/api/streams data.live.streamID.subscribers.length() will give the live count.

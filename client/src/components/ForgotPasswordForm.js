@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import users from '../apis/users';
+import { toast } from 'react-toastify';
 const ForgotPasswordForm = () => {
 	const [email, setEmail] = useState('');
 	const onSubmit = async (e, formValues) => {
 		e.preventDefault();
 		console.log(email);
-		let obj = {
-			email,
-		};
+
 		try {
+			let obj = {
+				email,
+			};
 			const sentPassword = await users.post(
 				'/api/v1/users/forgotPassword',
 				obj,
 			);
-			console.log(sentPassword);
+
+			toast.success(`SUCCESS: ${sentPassword.data.message}`);
 		} catch (err) {
-			console.log(err.response.data.message);
+			toast.error(`ERROR: Check your email address and try again!`);
 		}
 
 		// api/v1/users/forgotPassword
@@ -35,7 +38,7 @@ const ForgotPasswordForm = () => {
 				</div>
 
 				<button className='ui button tiny positive' type='submit'>
-					Sign In
+					Reset Password!
 				</button>
 			</form>
 		</div>
