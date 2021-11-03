@@ -152,7 +152,11 @@ class UserAuth extends React.Component {
 					/>
 					<button
 						className='ui green button'
-						style={{ margin: '5px 5px 5px 0px' }}
+						style={{
+							margin: '5px 5px 5px 0px',
+							height: '50%',
+							justifySelf: 'center',
+						}}
 						onClick={this.toggle}
 						type='button'
 					>

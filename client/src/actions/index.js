@@ -98,6 +98,6 @@ export const editStream = (username, formValues) => async (dispatch) => {
 	dispatch({ type: EDIT_STREAM, payload: response.data });
 	// etch case, reset the form.
 	dispatch(reset('streamForm'));
-	// Do some programmatic navigation to get back to the root route
-	history.push('/');
+	// Do some programmatic navigation to get back to the stream
+	history.push(`/${username}`);
 };

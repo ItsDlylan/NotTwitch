@@ -8,7 +8,12 @@ class StreamShow extends React.Component {
 	//constructor to give us the ability to have a ref to the video element we created.
 	constructor(props) {
 		super(props);
-		this.state = { stream: {} };
+		this.state = {
+			stream: {},
+			editMessage: 'Edit Stream',
+			isOpened: false,
+			isUpdated: false,
+		};
 		//Create a Ref for the video Element.
 		this.videoRef = React.createRef();
 	}
@@ -69,21 +74,46 @@ class StreamShow extends React.Component {
 		// Test the play later for automatic plays.
 		this.player.play();
 	}
-	editStream = () => {
-		return <StreamEdit />;
+	editStream = async () => {
+		if (this.state.isOpened === false) {
+			this.setState({ isOpened: true, editMessage: 'Cancel Edit' });
+		} else if (this.state.isOpened === true) {
+			this.setState({ isOpened: false, editMessage: 'Edit Stream' });
+		}
+	};
+	editSubmit = async () => {
+		const { username } = this.props.match.params;
+
+		const newFetchedStream = await this.fetchStream(username);
+		this.setState({
+			stream: newFetchedStream,
+			isOpened: false,
+			editMessage: 'Edit Stream',
+		});
+	};
+	handleChildClick = (e) => {
+		e.stopPropagation();
 	};
 	renderAdmin = (stream) => {
 		if (stream === undefined) {
 			return;
 		}
-		console.log(stream.data.stream.userID);
-		console.log(this.state.stream.data.stream.userID);
 
-		if (
-			stream.data.stream.userID === this.state.stream.data.stream.userID
-		) {
-			console.log('hit');
-			return <div onClick={this.editStream}>Edit Stream</div>;
+		if (this.props.currentUserId === stream.data.stream.userID) {
+			return (
+				<div onClick={this.editStream}>
+					{this.state.editMessage}
+					{this.state.isOpened ? (
+						<StreamEdit
+							handleClick={this.handleChildClick}
+							editSubmit={this.editSubmit}
+							username={this.state.stream.data.stream.username}
+						/>
+					) : (
+						false
+					)}
+				</div>
+			);
 		}
 	};
 	// to get the live count, go to localhost:8000/api/streams data.live.streamID.subscribers.length() will give the live count.
@@ -104,7 +134,6 @@ class StreamShow extends React.Component {
 				{this.renderAdmin(stream)}
 				<ul>
 					{stream.data.stream.tags.map((el) => {
-						console.log(el);
 						return (
 							<div key={el} className='ui blue label'>
 								{el}

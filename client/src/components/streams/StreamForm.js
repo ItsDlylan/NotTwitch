@@ -37,7 +37,6 @@ const StreamForm = (props) => {
 				if (!formValues.title) {
 					errors.title = 'You must enter a title';
 				}
-
 				return errors;
 			}}
 			render={({ handleSubmit }) => (
@@ -50,7 +49,7 @@ const StreamForm = (props) => {
 					<Field
 						name='tags'
 						component={renderInput}
-						label='Enter Some Tags'
+						label='Enter Some Tags: english, spanish, french, gaming, irl, coding'
 					/>
 					<button type='submit' className='ui button primary'>
 						Submit

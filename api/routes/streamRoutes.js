@@ -22,7 +22,7 @@ router
 router
 	.route('/:username')
 	.get(streamController.getStream)
-	.patch(authController.protect, streamController.updateStream)
+	.patch(streamController.updateStream)
 	.delete(
 		authController.protect,
 		authController.restrictTo('admin'),
