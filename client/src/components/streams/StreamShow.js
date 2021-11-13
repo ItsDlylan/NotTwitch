@@ -10,6 +10,7 @@ class StreamShow extends React.Component {
 		super(props);
 		this.state = {
 			stream: {},
+			user: {},
 			editMessage: 'Edit Stream',
 			isOpened: false,
 			isUpdated: false,
@@ -17,6 +18,16 @@ class StreamShow extends React.Component {
 		//Create a Ref for the video Element.
 		this.videoRef = React.createRef();
 	}
+	fetchUser = async (username) => {
+		try {
+			const res = await axios.get(
+				`http://localhost:3001/api/v1/users/${username}`,
+			);
+			return res.data;
+		} catch (err) {
+			console.log({ err });
+		}
+	};
 
 	fetchStream = async (username) => {
 		try {
@@ -26,14 +37,18 @@ class StreamShow extends React.Component {
 
 			return res.data;
 		} catch (err) {
-			return { status: 'fail', data: {} };
+			return err.response.data.message;
 		}
 	};
 	async componentDidMount() {
 		const { username } = this.props.match.params;
+
 		const fetchedStream = await this.fetchStream(username);
+		const fetchedUser = await this.fetchUser(username);
+
 		// this.props.fetchStream(username);
-		this.setState({ stream: fetchedStream });
+		this.setState({ stream: fetchedStream, user: fetchedUser.data });
+
 		// attempt to build the player
 		this.buildPlayer();
 	}
@@ -41,9 +56,14 @@ class StreamShow extends React.Component {
 	componentWillUnmount() {
 		//When the component is Unmounted, destory the player so the user doesn't attempt to download
 		//video files when its no longer needed.
+
+		if (!this.state.stream) {
+			return;
+		}
 		if (Object.keys(this.state.stream).length > 0) {
 			this.player.destroy();
-			this.setState({ stream: {} });
+			this.setState({ stream: {}, user: {} });
+			return;
 		}
 	}
 
@@ -54,13 +74,17 @@ class StreamShow extends React.Component {
 
 	buildPlayer() {
 		// if no stream or this.player, just return because it can't build the player yet.
-		if (this.player || Object.keys(this.state.stream).length === 0) {
+		if (
+			this.state.stream.status === 'fail' ||
+			this.player ||
+			Object.keys(this.state.stream).length === 0
+		) {
 			return;
 		}
 
+		// TODO: Gotta figure out how to make this private and not sent to the front End
 		const { streamKEY } = this.state.stream.data.stream;
 
-		// console.log(this.props.stream.data.stream);
 		//Create the Player, with type:flv' and using the URL
 		// https://www.npmjs.com/package/node-media-server via flv.js over http-flv
 		this.player = flv.createPlayer({
@@ -69,9 +93,8 @@ class StreamShow extends React.Component {
 		});
 		// Attach the video Element to the Player.
 		this.player.attachMediaElement(this.videoRef.current);
-		// Load the Player.
+		// Load the Player and automatically start playing it.
 		this.player.load();
-		// Test the play later for automatic plays.
 		this.player.play();
 	}
 	editStream = async () => {
@@ -85,6 +108,7 @@ class StreamShow extends React.Component {
 		const { username } = this.props.match.params;
 
 		const newFetchedStream = await this.fetchStream(username);
+
 		this.setState({
 			stream: newFetchedStream,
 			isOpened: false,
@@ -121,7 +145,17 @@ class StreamShow extends React.Component {
 		const { stream } = this.state;
 		if (!stream.data) {
 			return (
-				<video ref={this.videoRef} style={{ width: '100%' }} controls />
+				<div>
+					<video
+						ref={this.videoRef}
+						style={{ width: '100%' }}
+						controls
+					/>
+					<h1>
+						{this.props.match.params.username} is offline, or cannot
+						be found.{' '}
+					</h1>
+				</div>
 			);
 		}
 

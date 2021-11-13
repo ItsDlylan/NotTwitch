@@ -18,7 +18,7 @@ export default (state = {}, action) => {
 			return { ...state, [action.payload.username]: action.payload };
 		case EDIT_STREAM:
 			// return the new Stream Object with the new item being the username: and the payload.
-			return { ...state, [action.payload.username]: action.payload };
+			return { ...state };
 		case DELETE_STREAM:
 			// using Lodashs Omit method, grab the state and delete the key-value pair with the action.payload which
 			// was the username

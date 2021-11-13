@@ -46,7 +46,6 @@ exports.login = catchAsync(async (req, res, next) => {
 	if (!email || !password) {
 		return next(new AppError('Please provide email and password!', 400));
 	}
-
 	// 2) Check if user exists && password is correct
 	const user = await User.findOne({ email }).select('+password');
 
@@ -57,6 +56,7 @@ exports.login = catchAsync(async (req, res, next) => {
 	// 3) If everything ok, send token to client
 	createSendToken(user, 200, res);
 });
+// JWT's What they are, why use them
 
 exports.protect = catchAsync(async (req, res, next) => {
 	// 1) Getting token and check if its there is a token.
@@ -196,10 +196,10 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 // req.body needs to have passwordCurrent, password, and passwordConfirm
 exports.updatePassword = catchAsync(async (req, res, next) => {
 	// 1) Get User from collection
-	console.log(req.user.id);
+
 	const user = await User.findById(req.user.id).select('+password');
 	// 2) check if POSTed current password is correct
-	console.log(user);
+
 	if (
 		!(await user.correctPassword(req.body.passwordCurrent, user.password))
 	) {
