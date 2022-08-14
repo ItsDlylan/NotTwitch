@@ -1,16 +1,25 @@
 /*
 Everything in this file represents the APP, all the middleware the APP uses goes here.
 */
+
 // 3rd Party Express Module
 const express = require('express');
-// Middleware Morgan
+
+// Global Middleware
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 const cors = require('cors');
 const path = require('path');
 
+// ERRORS
 const AppError = require('./utils/appError');
 const globalErrorhandler = require('./controllers/errorController');
-// Custom Routers
+
+// CUSTOM ROUTERS
 const streamRouter = require('./routes/streamRoutes');
 const userRouter = require('./routes/userRoutes');
 
@@ -20,13 +29,49 @@ const app = express();
 // Node serve static files built from React.
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
-// MIDDLEWARES
+// GLOBAL MIDDLEWARES
+// Set security HTTP Headers
+app.use(helmet());
+
+// Development Logging
 if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('dev'));
 }
-app.use(cors());
-app.use(express.json());
+// Limit requests from same IP
+const limiter = rateLimit({
+	max: 300,
+	windowMs: 60 * 60 * 1000,
+	message: 'Too many requests, please try again in an hour!',
+});
 
+const loginLimiter = rateLimit({
+	max: 10,
+	windowMs: 60 * 60 * 1000,
+	message: 'Too many login requests, please try again in an hour!',
+});
+
+app.use('/api', limiter);
+app.use('/api/v1/users/login', loginLimiter);
+
+app.use(cors());
+
+//Body Parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' }));
+
+// Data sanitization against NoSQL query Injection
+app.use(mongoSanitize());
+
+// Data Sanitization against XSS (Cross Site Scripting)
+app.use(xss());
+
+//Prevent parameter pollution
+app.use(
+	hpp({
+		whitelist: [''],
+	}),
+);
+
+// Test Middleware
 app.use((req, res, next) => {
 	req.requestTime = new Date().toISOString();
 	next();

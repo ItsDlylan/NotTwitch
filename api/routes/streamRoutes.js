@@ -1,5 +1,3 @@
-// THIS ROUTE IS TO UPDATE THE STREAMS THAT ARE CURRENTLY LIVE.
-
 const express = require('express');
 const streamController = require('../controllers/streamController');
 const authController = require('../controllers/authController');

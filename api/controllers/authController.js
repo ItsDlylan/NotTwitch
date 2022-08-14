@@ -16,6 +16,22 @@ const createSendToken = (user, statusCode, res) => {
 	// Create JWT token using the id of the User, the secret key, that expires in 5 minutes.
 	const token = signToken(user.id);
 
+	const cookieOptions = {
+		expires: new Date(
+			Date.now() +
+				process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+		),
+		httpOnly: true, // lets the browser know to only store the cookie and deny edits,
+	};
+
+	// Make sure that the password getting returned in undefined.
+	user.password = undefined;
+
+	// if we're on production make sure the cookie only gets sent to secure connections
+	if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+	res.cookie('jwt', token, cookieOptions);
+
 	res.status(statusCode).json({
 		status: 'success',
 		token,
@@ -32,6 +48,9 @@ exports.signup = catchAsync(async (req, res, next) => {
 		password: req.body.password,
 		passwordConfirm: req.body.passwordConfirm,
 		passwordChangedAt: req.body.passwordChangedAt,
+		//streamKEY should def not be apart of the sign up process,
+		//TODO: I believe we should create an api endpoint of "getMeAPIAccess", 
+		//that generates them a streamKEY that we can add to their user Collection
 		streamKEY: req.body.streamKEY,
 		role: req.body.role,
 		title: req.body.title,
