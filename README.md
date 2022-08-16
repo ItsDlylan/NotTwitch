@@ -16,6 +16,10 @@ This is going to test my skills with Deployment/Using a NonSQL database.
 
 This app will bring people together without having to utilize common apps like [Twitch.tv] where they have to pick a topic and only use the topics that are approved by Twitch, allowing for user freedom to a certain degree.
 
+# Data Model
+
+![alt text](Data Model.png)
+
 ## Updated Features
 
 -   Entirely Custom Style that Similarly matches [Twitch.tv] for practice
