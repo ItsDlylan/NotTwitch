@@ -18,7 +18,7 @@ This app will bring people together without having to utilize common apps like [
 
 # Data Model
 
-![alt text](Data Model.png)
+![Data Model](Data-Model.png)
 
 ## Updated Features
 
