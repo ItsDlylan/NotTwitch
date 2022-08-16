@@ -1,6 +1,6 @@
-#Twitch Remake (kinda)
+# Twitch Remake (kinda)
 
-#To Get the App Running
+# To Get the App Running
 
 1. In the Root folder run `npm run start:dev` to start the server
 2. In another terminal, `cd client`, then run `npm run start` to run the react front end
