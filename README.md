@@ -1,3 +1,12 @@
+#Twitch Remake (kinda)
+
+#To Get the App Running
+
+1. In the Root folder run `npm run start:dev` to start the server
+2. In another terminal, `cd client`, then run `npm run start` to run the react front end
+
+# List of wanted features
+
 # Stream Capstone
 
 Customization Update to the current Proof of Concept build out.
@@ -14,24 +23,15 @@ This app will bring people together without having to utilize common apps like [
 -   Entirely Custom Style that Similarly matches [Twitch.tv] for practice
 -   Watch/Interact with Streams
 -   Filter Streams on topics
-    -   Allows for Usability
 -   Live Video Feed
     -   Live Chat Via Web Sockets - Fun Interactivity with Chat vs Users
-        (also wanna learn Web Sockets)
 -   Admin Controls within Stream Deck
     -   1 Stream per Account
 -   User Profile Panel
     -   User personalized stream pages
-
-MAYBE
-
 -   Admin DashBoard for Moderation (NSFW/illegal activites)
 
     -   Report button for streams/comments
+    -   Stream Flagging based on reports/hour (or something)
 
--   Customer Service for Support Tickets
-
-#To Get the App Running
-
-1. In the Root folder run `npm run start:dev` to start the server
-2. In another terminal, `cd client`, then run `npm run start` to run the react front end
+-   Support Tickets inside of Super Admin Dashboard
