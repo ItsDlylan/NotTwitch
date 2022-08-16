@@ -7,8 +7,6 @@
 
 # List of wanted features
 
-# Stream Capstone
-
 Customization Update to the current Proof of Concept build out.
 
 This APP will allows users to stream content from their own PC
