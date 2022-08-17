@@ -7,6 +7,7 @@ const express = require('express');
 
 // Global Middleware
 const morgan = require('morgan');
+const rfs = require('rotating-file-stream');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -37,6 +38,13 @@ app.use(helmet());
 if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('dev'));
 }
+
+// Access Logging
+let accessLogStream = rfs.createStream('access.log', {
+	interval: '1d', // rotate daily
+	path: path.join(__dirname, 'log'),
+});
+app.use(morgan('common', { stream: accessLogStream }));
 // Limit requests from same IP
 const limiter = rateLimit({
 	max: 300,

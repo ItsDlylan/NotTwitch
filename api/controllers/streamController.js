@@ -1,5 +1,4 @@
-const Stream = require('../DBmodels/streamModel');
-const User = require('../DBmodels/userModel');
+const Stream = require('../Models/Stream');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
@@ -41,7 +40,6 @@ exports.createStream = catchAsync(async (req, res, next) => {
 // // ENDPOINT `/streams/:username`
 exports.getStream = catchAsync(async (req, res, next) => {
 	const query = { slug: req.params.username.toLowerCase() };
-	const user = await User.findOne({ username: req.params.username });
 	const stream = await Stream.findOne(query).select('+streamKEY');
 
 	if (!stream) {
@@ -52,7 +50,6 @@ exports.getStream = catchAsync(async (req, res, next) => {
 		status: 'success',
 		data: {
 			stream,
-			user,
 		},
 	});
 });

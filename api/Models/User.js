@@ -120,7 +120,8 @@ userSchema.methods.createPasswordResetToken = function () {
 	// Creates a random string of 32 bytes, and changing it to hex
 	const resetToken = crypto.randomBytes(32).toString('hex');
 
-	//Encrypt the resetToken using the sha256 algorithm, and changing it into hex and storing it on the document.
+	//Encrypt the resetToken using the sha256 algorithm,
+	//and changing it into hex and storing it on the document.
 	this.passwordResetToken = crypto
 		.createHash('sha256')
 		.update(resetToken)

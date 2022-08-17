@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-
 const streamSchema = new mongoose.Schema(
 	{
 		username: {
@@ -41,18 +40,22 @@ const streamSchema = new mongoose.Schema(
 		tags: {
 			type: [String],
 			enum: {
-				values: [
-					'english',
-					'spanish',
-					'french',
-					'gaming',
-					'irl',
-					'coding',
-				],
-				message:
-					'Acceptable tags are: english, spanish, french, gaming, irl or coding',
+				values: ['english', 'spanish', 'french'],
+				message: 'Acceptable tags are: english, spanish, french',
 			},
 		},
+		topic: {
+			type: [String],
+			enum: {
+				values: ['Counter Strike: Global Offensive', 'Valorant', 'IRL'],
+			},
+		},
+		moderators: [
+			{
+				type: mongoose.Schema.ObjectId,
+				ref: 'User',
+			},
+		],
 	},
 	{
 		toJSON: { virtuals: true },
@@ -75,9 +78,28 @@ streamSchema.pre('save', function (next) {
 	next();
 });
 
+// UPDATE MIDDLEWARE:
+
+//Update the moderators being updated, same as the save where we attempt to find the Users by the id being saved.
+streamSchema.pre(['updateOne', 'findOneAndUpdate'], async function (next) {
+	next();
+});
+
 // QUERY MIDDLEWARE:
 streamSchema.pre(/^find/, function (next) {
+	// Future Shadow ban tech?
+	// this.find({shadowBannedStream: ( $ne: true )});
+
 	this.start = Date.now();
+	next();
+});
+
+streamSchema.pre(/^find/, function (next) {
+	this.populate({
+		path: 'moderators',
+		select: '-__v -passwordChangedAt -email -title',
+	});
+
 	next();
 });
 
