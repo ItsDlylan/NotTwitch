@@ -68,8 +68,9 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 });
 
 exports.getUser = catchAsync(async (req, res) => {
-	const user = await User.findOne({ username: req.params.username });
-	console.log({ user });
+	const user = await User.findOne({ username: req.params.username }).populate(
+		'comments',
+	);
 	res.status(200).json({
 		status: 'success',
 		data: {

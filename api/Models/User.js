@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
 			lowercase: true,
 			validate: [validator.isEmail, 'Please provide a valid Email'],
 		},
+		slug: String,
 		photo: String,
 
 		password: {
@@ -40,15 +41,24 @@ const userSchema = new mongoose.Schema(
 				message: 'Passwords are not the same',
 			},
 		},
-		passwordChangedAt: Date,
-		passwordResetToken: String,
-		passwordResetExpires: Date,
+		passwordChangedAt: {
+			type: String,
+			select: false,
+		},
+		passwordResetToken: {
+			type: String,
+			select: false,
+		},
+		passwordResetExpires: {
+			type: Date,
+			select: false,
+		},
 		streamKEY: {
 			type: String,
 			unique: [true, 'A stream can only be associated to 1 streamkey'],
 			select: false,
 		},
-		createdAt: { type: Date, default: Date.now(), select: true },
+		createdAt: { type: Date, default: Date.now() },
 		title: {
 			type: String,
 			trim: true,
@@ -69,11 +79,25 @@ const userSchema = new mongoose.Schema(
 			default: 'user',
 		},
 	},
+	// field not stored in database, show in output
 	{
 		toJSON: { virtuals: true },
 		toObject: { virtuals: true },
 	},
 );
+
+// VIRTUAL
+
+//Virtual populate, setting up the relationships for Parent Referencing populations on Comments
+userSchema.virtual('comments', {
+	ref: 'Comment',
+	//foreign = name on other Model
+	foreignField: 'userStreaming',
+	//local = where the id is stored on the user
+	localField: '_id',
+});
+
+//DOCUMENT MIDDLEWARE: runs before .save() and .create()
 
 // Password Hashing
 userSchema.pre('save', async function (next) {
@@ -95,6 +119,16 @@ userSchema.pre('save', function (next) {
 	next();
 });
 
+// UPDATE MIDDLEWARE:
+
+//Update the moderators being updated, same as the save where we attempt to find the Users by the id being saved.
+userSchema.pre(['updateOne', 'findOneAndUpdate'], async function (next) {
+	next();
+});
+
+// QUERY MIDDLEWARE:
+
+// METHODS
 userSchema.methods.correctPassword = async function (
 	candidatePassword,
 	userPassword,
@@ -138,7 +172,7 @@ userSchema.set('toJSON', {
 	virtuals: true,
 	transform: (doc, ret, options) => {
 		delete ret.__v;
-		ret.id = ret._id.toString();
+		ret.id = ret._id;
 		delete ret._id;
 	},
 });

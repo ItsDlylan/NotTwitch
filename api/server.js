@@ -5,8 +5,8 @@ Error handling outside of Express,
 and Starting the server goes here.
 */
 const mongoose = require('mongoose');
-const User = require('./DBmodels/userModel');
-const Stream = require('./DBmodels/streamModel');
+const User = require('./Models/User');
+const Stream = require('./Models/Stream');
 
 const dotenv = require('dotenv');
 

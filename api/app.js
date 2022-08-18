@@ -23,6 +23,7 @@ const globalErrorhandler = require('./controllers/errorController');
 // CUSTOM ROUTERS
 const streamRouter = require('./routes/streamRoutes');
 const userRouter = require('./routes/userRoutes');
+const commentRouter = require('./routes/commentRoutes');
 
 // Create the app, run instance express()
 const app = express();
@@ -89,6 +90,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/streams', streamRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/comments', commentRouter);
 
 app.get('/', (req, res) => {
 	res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));

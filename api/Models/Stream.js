@@ -57,20 +57,12 @@ const streamSchema = new mongoose.Schema(
 			},
 		],
 	},
+	// field not stored in database, show in output
 	{
 		toJSON: { virtuals: true },
 		toObject: { virtuals: true },
 	},
 );
-
-streamSchema.set('toJSON', {
-	virtuals: true,
-	transform: (doc, ret, options) => {
-		delete ret.__v;
-		ret.id = ret._id.toString();
-		delete ret._id;
-	},
-});
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 streamSchema.pre('save', function (next) {
@@ -104,8 +96,17 @@ streamSchema.pre(/^find/, function (next) {
 });
 
 streamSchema.post(/^find/, function (docs, next) {
-	console.log(`Query took ${Date.now() - this.start} milliseconds!!`);
+	console.log(`Stream Query took ${Date.now() - this.start} milliseconds!!`);
 	next();
+});
+
+streamSchema.set('toJSON', {
+	virtuals: true,
+	transform: (doc, ret, options) => {
+		delete ret.__v;
+		ret.id = ret._id.toString();
+		delete ret._id;
+	},
 });
 
 const Stream = mongoose.model('Stream', streamSchema);

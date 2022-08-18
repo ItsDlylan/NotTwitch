@@ -49,7 +49,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 		passwordConfirm: req.body.passwordConfirm,
 		passwordChangedAt: req.body.passwordChangedAt,
 		//streamKEY should def not be apart of the sign up process,
-		//TODO: I believe we should create an api endpoint of "getMeAPIAccess", 
+		//TODO: I believe we should create an api endpoint of "getMeAPIAccess",
 		//that generates them a streamKEY that we can add to their user Collection
 		streamKEY: req.body.streamKEY,
 		role: req.body.role,
@@ -124,7 +124,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 exports.restrictTo = (...roles) => {
 	return (req, res, next) => {
-		// roles ['admin']
+		// roles ['user', 'admin']
 		// For Users hitting this endpoint.
 		if (!roles.includes(req.user.role)) {
 			return next(

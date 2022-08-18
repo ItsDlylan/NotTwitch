@@ -53,7 +53,6 @@ class UserAuth extends React.Component {
 				password: '',
 			});
 		} catch (err) {
-			console.log();
 			toast.error(err.response.data.message);
 			// Error Message
 			// console.log(err.response.data.message);
