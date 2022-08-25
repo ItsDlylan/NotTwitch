@@ -60,7 +60,7 @@ nms.on('prePublish', async (id, StreamPath, args) => {
 			title: user[0].title,
 			userID: user[0].id,
 			streamKEY: streamkey,
-			tags: ['coding', 'english'],
+			tags: ['english'],
 		};
 		const newStream = await Stream.create(streamObj);
 	}

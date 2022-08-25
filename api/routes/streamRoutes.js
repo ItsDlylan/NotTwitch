@@ -12,7 +12,7 @@ router
 	.get(streamController.getAllStreams)
 	.post(
 		authController.protect,
-		authController.restrictTo('admin'),
+		authController.restrictTo('user', 'admin'),
 		streamController.createStream,
 	);
 
@@ -23,7 +23,7 @@ router
 	.patch(streamController.updateStream)
 	.delete(
 		authController.protect,
-		authController.restrictTo('admin'),
+		authController.restrictTo('user'),
 		streamController.deleteStream,
 	);
 

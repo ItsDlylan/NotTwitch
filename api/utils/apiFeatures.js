@@ -12,12 +12,12 @@ class APIFeatures {
 
 		// 1B) Advanced Filtering
 		let queryStr = JSON.stringify(queryObj);
+		// If we add gte >=, gt >, lte <=, lt <, we want to replace those with their Mongoose $ function ie: $gte
 		queryStr = queryStr.replace(
 			/\b(gte|gt|lte|lt)\b/g,
 			(match) => `$${match}`,
 		);
 
-		// let query = Tour.find(JSON.parse(queryStr));
 		this.query = this.query.find(JSON.parse(queryStr));
 		return this;
 	}
