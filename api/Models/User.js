@@ -126,6 +126,12 @@ userSchema.pre(['updateOne', 'findOneAndUpdate'], async function (next) {
 	next();
 });
 
+userSchema.pre(/^find/, function (next) {
+	//this points to the current query,
+	this.find({ active: { $ne: false } });
+	next();
+});
+
 // QUERY MIDDLEWARE:
 
 // METHODS

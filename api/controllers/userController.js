@@ -13,6 +13,24 @@ const filterObj = (obj, ...allowedFields) => {
 
 // user Handlers
 
+exports.getMe = (req, res, next) => {
+	req.params.id = req.user.id;
+	next();
+};
+
+exports.softDeleteMe = catchAsync(async (req, res, next) => {
+	await User.findByIdAndUpdate(req.user.id, { active: false });
+});
+
+exports.hardDeleteMe = catchAsync(async (req, res, next) => {
+	await User.findByIdAndDelete(req.user.id);
+
+	res.status(204).json({
+		status: 'success',
+		data: null,
+	});
+});
+
 exports.updateMe = catchAsync(async (req, res, next) => {
 	// 1) Create error if user POSTs password data
 	if (req.body.password || req.body.passwordConfirm) {

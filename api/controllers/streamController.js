@@ -18,7 +18,13 @@ exports.getStream = factory.getOneByQuery(
 
 exports.getAllStreams = factory.getAll(Stream);
 
-exports.createStream = factory.createOne(Stream);
+exports.createStream = (req, res) => {
+	res.status(500).json({
+		status: 'error',
+		message:
+			'This route is not defined! If you want to create a Stream, start Streaming with your Stream Key!',
+	});
+};
 
 exports.updateStream = factory.updateOneByQuery(Stream, {
 	slug: 'req.params.username.toLowerCase()',

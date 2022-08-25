@@ -12,19 +12,25 @@ router.use('/:userStreaming/comments', commentRouter);
 // USER ROUTES
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
+// Protect all routes under this
+router.use(authController.protect);
 
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
 // req.body needs to have passwordCurrent, password, and passwordConfirm
-router.patch(
-	'/updateMyPassword',
-	authController.protect,
-	authController.updatePassword,
-);
+router.patch('/updateMyPassword', authController.updatePassword);
 
 router.patch('/updateMe', authController.protect, userController.updateMe);
+router.delete(
+	'/softDeleteMe',
+	authController.restrictTo('user'),
+	userController.softDeleteMe,
+);
 
+router.patch('/hardDeleteMe', userController.hardDeleteMe);
+
+router.get('/me', userController.getMe, userController.getUser);
 router
 	.route('/')
 	.get(userController.getAllUsers)
@@ -33,7 +39,7 @@ router
 router
 	.route('/:id')
 	.get(userController.getUser)
-	.patch(authController.protect, userController.updateUser)
-	.delete(authController.protect, userController.deleteUser);
+	.patch(authController.restrictTo('admin'), userController.updateUser)
+	.delete(authController.restrictTo('admin'), userController.deleteUser);
 
 module.exports = router;

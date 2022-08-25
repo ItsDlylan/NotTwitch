@@ -4,11 +4,12 @@ const authController = require('../controllers/authController');
 
 const router = express.Router({ mergeParams: true });
 
+router.use(authController.protect);
+
 router
 	.route('/')
 	.get(commentController.getAllComments)
 	.post(
-		authController.protect,
 		authController.restrictTo('user', 'admin'),
 		commentController.setUserCommentingAndStreamingIds,
 		commentController.createComment,
@@ -17,6 +18,9 @@ router
 router
 	.route('/:id')
 	.get(commentController.getComment)
-	.patch(commentController.updateComment)
-	.delete(commentController.deleteComment);
+	.patch(authController.restrictTo('admin'), commentController.updateComment)
+	.delete(
+		authController.restrictTo('admin'),
+		commentController.deleteComment,
+	);
 module.exports = router;

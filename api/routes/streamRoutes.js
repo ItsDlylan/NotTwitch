@@ -12,7 +12,7 @@ router
 	.get(streamController.getAllStreams)
 	.post(
 		authController.protect,
-		authController.restrictTo('user', 'admin'),
+		authController.restrictTo('admin'),
 		streamController.createStream,
 	);
 
@@ -20,10 +20,14 @@ router
 router
 	.route('/:username')
 	.get(streamController.getStream)
-	.patch(streamController.updateStream)
+	.patch(
+		authController.protect,
+		authController.restrictTo('user', 'admin'),
+		streamController.updateStream,
+	)
 	.delete(
 		authController.protect,
-		authController.restrictTo('user'),
+		authController.restrictTo('user', 'admin'),
 		streamController.deleteStream,
 	);
 
