@@ -59,7 +59,7 @@ exports.updateOneByQuery = (Model, queryParam = {}) =>
 		res.status(200).json({
 			status: 'success',
 			data: {
-				document,
+				data: document,
 			},
 		});
 	});
@@ -81,7 +81,7 @@ exports.updateOneById = (Model) =>
 		res.status(200).json({
 			status: 'success',
 			data: {
-				document,
+				data: document,
 			},
 		});
 	});

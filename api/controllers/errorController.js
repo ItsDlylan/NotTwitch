@@ -22,30 +22,47 @@ const handleJWTError = () =>
 const handleJWTExpiredError = () =>
 	AppError('Your token has expired! Please log in again!', 401);
 
-const sendErrorDev = (err, res) => {
-	res.status(err.statusCode).json({
-		status: err.status,
-		error: err,
-		stack: err.stack,
-		message: err.message,
-	});
-};
-const sendErrorProd = (err, res) => {
-	// Operational, trusted error: send message to client
-	if (err.isOperational) {
-		res.status(err.statusCode).json({
+const sendErrorDev = (err, req, res) => {
+	if (req.originalUrl.startsWith('/api')) {
+		return res.status(err.statusCode).json({
 			status: err.status,
+			error: err,
+			stack: err.stack,
 			message: err.message,
 		});
-	} else {
+	}
+
+	// Display view, not expecting any json expecting a redirect.
+	//res.res().render
+};
+const sendErrorProd = (err, req, res) => {
+	//API
+	if (req.originalUrl.startsWith('/api')) {
+		// Operational, trusted error: send message to client
+		if (err.isOperational) {
+			return res.status(err.statusCode).json({
+				status: err.status,
+				message: err.message,
+			});
+		}
 		// Non Operational, Programming or other unknown non-trusted error: send a generic message that something messed up to client
 		// 1) Log Error
 		console.error('ERROR ', err);
 		// 2) Send Generic Message
-		res.status(500).json({
+		return res.status(500).json({
 			status: 'error',
 			message: 'Something went very wrong!',
 		});
+	}
+
+	// Display view, not expecting any json expecting a redirect.
+	//res.res().render
+	if (err.isOperational) {
+		// Send operational message to the error view
+	} else {
+		// 1) Log Error
+		console.error('ERROR ', err);
+		// 2) Send Generic Message with error view
 	}
 };
 module.exports = (err, req, res, next) => {
@@ -53,7 +70,7 @@ module.exports = (err, req, res, next) => {
 	err.status = err.status || 'error';
 
 	if (process.env.NODE_ENV === 'development') {
-		sendErrorDev(err, res);
+		sendErrorDev(err, req, res);
 	} else if (process.env.NODE_ENV === 'production') {
 		let error = { ...err };
 		// For some reason .name didnt get passed down when spread.
@@ -67,6 +84,6 @@ module.exports = (err, req, res, next) => {
 		if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
 		if (error.code === 11000) error = handleDuplicateFieldsDB();
 
-		sendErrorProd(error, res);
+		sendErrorProd(error, req, res);
 	}
 };

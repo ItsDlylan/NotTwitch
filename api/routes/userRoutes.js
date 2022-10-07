@@ -28,7 +28,11 @@ router.delete(
 	userController.softDeleteMe,
 );
 
-router.patch('/hardDeleteMe', userController.hardDeleteMe);
+router.patch(
+	'/hardDeleteMe',
+	authController.restrictTo('user'),
+	userController.hardDeleteMe,
+);
 
 router.get('/me', userController.getMe, userController.getUser);
 router

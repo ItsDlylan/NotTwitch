@@ -67,6 +67,10 @@ commentSchema.pre(/^find/, function (next) {
 	next();
 });
 
+// Create an index of the UserCommenting, the userStreaming, and the createdAt so we can have quicker checks
+// for Whenever we want to add a "throttling" and "you sent the same message too quickly" feature
+commentSchema.index({ userCommenting: 1, userStreaming: 1, createdAt: 1 });
+
 commentSchema.post(/^find/, function (docs, next) {
 	console.log(`Comment Query took ${Date.now() - this.start} milliseconds!!`);
 	next();
